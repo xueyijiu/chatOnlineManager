@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.demo.mapper.UserMapper">
+
+
+    <resultMap id="BaseResultMap" type="com.example.demo.entity.User">
+        <id column="id" property="id"/>
+        <result column="username" property="username" jdbcType="VARCHAR"/>
+        <result column="password" property="password" jdbcType="VARCHAR"/>
+    </resultMap>
+
+
+    <sql id="Base_Column_List">
+        id, username, password
+    </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        from user
+        where id = #{id}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from userinfo
+        where id = #{id}
+    </delete>
+    <insert id="insert" parameterType="com.example.demo.entity.User">
+        insert into user (id, username, password
+        )
+        values (#{id}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}
+        )
+    </insert>
+    <insert id="insertSelective" parameterType="com.example.demo.entity.User">
+        insert into userinfo
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="username != null">
+                username,
+            </if>
+            <if test="password != null">
+                password,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id},
+            </if>
+            <if test="username != null">
+                #{username,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                #{password,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.example.demo.entity.User">
+        update userinfo
+        <set>
+            <if test="username != null">
+                username = #{username,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                password = #{password,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.example.demo.entity.User">
+        update userinfo
+        set username = #{username,jdbcType=VARCHAR},
+        password = #{password,jdbcType=VARCHAR}
+        where id = #{id}
+    </update>
+
+    <!--<select id="findByUserName" parameterType="String" resultType="User">-->
+    <!--SELECT * FROM user WHERE username = #{username}-->
+
+    <!--</select>-->
+
+
+    <resultMap id="userMap" type="com.example.demo.entity.User">
+        <id property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="status" column="status"/>
+        <collection property="roles" ofType="com.example.demo.entity.Role">
+            <result column="name" property="name"/>
+        </collection>
+    </resultMap>
+
+    <!--<resultMap id="setUserRole" type="com.example.demo.entity.User">-->
+    <!--<id property="id" column="id"/>-->
+    <!--<result property="username" column="username"/>-->
+    <!--<result property="password" column="password"/>-->
+    <!--<association property="role" javaType="com.example.demo.entity.Role" column="name">-->
+    <!--</association>-->
+    <!--</resultMap>-->
+
+    <select id="findByUserName" resultMap="userMap" parameterType="String">
+        select u.*
+        ,r.name
+        from userinfo u
+        LEFT JOIN sys_user_role sru on u.id= sru.user_id
+        LEFT JOIN sys_role r on sru.role_id=r.id
+        where username= #{username}
+    </select>
+
+    <select id="getAllUsers" resultMap="userMap">
+        select u.*
+        ,r.name
+        from userinfo u
+        LEFT JOIN sys_user_role sru on u.id= sru.user_iD
+        LEFT JOIN sys_role r on sru.role_id=r.id
+        where u.status='1'
+    </select>
+
+    <select id="getUserId" parameterType="String" resultType="java.lang.Long">
+        SELECT id from userinfo where username = #{username}
+    </select>
+
+    <delete id="deleteUserById" parameterType="java.lang.Long">
+        DELETE FROM userinfo WHERE id = #{id}
+    </delete>
+
+
+</mapper>

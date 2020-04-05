@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.demo.mapper.UserAndRoleMapper">
+    <resultMap id="BaseResultMap" type="com.example.demo.entity.UserAndRole">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="role_id" property="roldId"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, user_id, role_id
+    </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_user_role
+        where id = #{id}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from sys_user_role
+        where id = #{id}
+    </delete>
+    <insert id="insert" parameterType="com.example.demo.entity.UserAndRole">
+        insert into sys_user_role (id, user_id, role_id
+        )
+        values (#{id}, #{userId}, #{roldId}
+        )
+    </insert>
+    <insert id="insertSelective" parameterType="com.example.demo.entity.UserAndRole">
+        insert into sys_user_role
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="user_id != null">
+                user_id,
+            </if>
+            <if test="roldid != null">
+                role_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id},
+            </if>
+            <if test="user_id != null">
+                #{userId},
+            </if>
+            <if test="roldid != null">
+                #{roldId},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.example.demo.entity.UserAndRole">
+        update sys_user_role
+        <set>
+            <if test="userid != null">
+                user_id = #{userId},
+            </if>
+            <if test="roldid != null">
+                role_id = #{roldId},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.example.demo.entity.UserAndRole">
+        update sys_user_role
+        set user_id = #{userId},
+        role_id = #{roldId}
+        where id = #{id}
+    </update>
+
+    <update id="setUserAdmin" parameterType="java.lang.Long">
+        UPDATE sys_user_role set role_id = 1 WHERE userID = #{user_id}
+    </update>
+
+    <update id="setUser" parameterType="java.lang.Long">
+        UPDATE sys_user_role set role_id = 2 WHERE user_id = #{user_id}
+    </update>
+</mapper>

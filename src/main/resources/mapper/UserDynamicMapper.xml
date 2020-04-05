@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.UserDynamicMapper">
+    <resultMap id="userDynamic" type="com.example.demo.dto.UserDynamicDto">
+        <result column="id" property="id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="userId" column="user_id"/>
+        <result property="deleteStatus" column="delete_status"/>
+        <result property="dynamicTitle" column="dynamic_title"/>
+        <result property="dynaminContent" column="dynamin_content"/>
+        <association property="user" javaType="com.example.demo.entity.UserInfo">
+            <result property="id" column="id"/>
+            <result property="username" column="username"/>
+            <result property="sex" column="sex"/>
+        </association>
+        <collection property="dynamicFile" ofType="com.example.demo.entity.DynamicFile">
+            <result property="id" column="dy_id"/>
+            <result property="filePath" column="file_path"/>
+        </collection>
+    </resultMap>
+
+    <select id="queryDynamic" parameterType="com.example.demo.entity.UserDynamic" resultMap="userDynamic">
+        select u.id u_id,ud.id ud_id,u.username,u.user_pic,u.sex,dy.id as dy_id,dy.file_path,ud.* from user_dynamic ud
+        LEFT JOIN userinfo u on ud.user_id=u.id
+        left Join dynamic_file dy on dy.dynamic_id=ud.id
+        <where>
+            <if test="dynamic.userId!=null">
+                ud.user_id=#{dynamic.userId}
+            </if>
+            <if test="dynamic.dynaminContent!=null and dynamic.dynaminContent!=''">
+                ud.dynaminContent like "%"#{dynamic.dynaminContent}"%"
+            </if>
+            <if test="dynamic.createTime!=null and dynamic.createTime!=''">
+                ud.createTime
+            </if>
+            <if test="dynamic.createTime!=null ">
+                <![CDATA[and create_time >= str_to_date(#{dynamic.createTime},'%Y-%m-%d %H:%i:%s')]]>
+            </if>
+            <if test="dynamic.endTime!=null">
+                <![CDATA[and end_time <= str_to_date(#{ynamic.endTime},'%Y-%m-%d %H:%i:%s')]]>
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+</mapper>
